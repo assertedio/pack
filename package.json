@@ -25,6 +25,10 @@
     "mocha": "^7.1.0",
     "nyc": "^15.0.0"
   },
+  "files": [
+    "lib/**/*.js",
+    "index.js"
+  ],
   "homepage": "https://github.com/assertedio/pack#readme",
   "keywords": [
     "asserted",
@@ -58,8 +62,8 @@
     "url": "git+https://github.com/assertedio/pack.git"
   },
   "scripts": {
+    "postpublish": "git push",
     "prepare": "fixpack",
-    "test": "nyc mocha --exit \"tests/**/*.unit.js\"",
-    "postpublish": "git push"
+    "test": "nyc mocha --exit \"tests/**/*.unit.js\""
   }
 }
