@@ -1,0 +1,64 @@
+{
+  "name": "@asserted/pack",
+  "description": "Pack up directory to send to asserted",
+  "version": "1.0.0",
+  "author": "Eric Hacke",
+  "bugs": {
+    "url": "https://github.com/assertedio/pack/issues"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.5",
+    "byte-size": "^5.0.1",
+    "cacache": "^12.0.3",
+    "columnify": "~1.5.4",
+    "graceful-fs": "^4.2.3",
+    "move-concurrently": "^1.0.1",
+    "npm-packlist": "^1.4.8",
+    "npmlog": "^4.1.2",
+    "read-package-json": "^2.1.1",
+    "ssri": "^6.0.1",
+    "tar": "^4.4.13"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "fs-extra": "^8.1.0",
+    "mocha": "^7.1.0",
+    "nyc": "^15.0.0"
+  },
+  "homepage": "https://github.com/assertedio/pack#readme",
+  "keywords": [
+    "asserted",
+    "pack",
+    "package",
+    "tar"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "nyc": {
+    "all": true,
+    "extension": [
+      ".js"
+    ],
+    "include": [
+      "lib/**/*.js"
+    ],
+    "exclude": [
+      "src/scratch.*"
+    ],
+    "reporter": [
+      "html",
+      "text",
+      "text-summary",
+      "lcov"
+    ]
+  },
+  "prettier": "@ehacke/prettier-config",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/assertedio/pack.git"
+  },
+  "scripts": {
+    "prepare": "fixpack",
+    "test": "nyc mocha --exit \"tests/**/*.unit.js\""
+  }
+}

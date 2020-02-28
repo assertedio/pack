@@ -1,0 +1,11 @@
+{
+  "id": "foo",
+  "name": "",
+  "description": "",
+  "frequency": {
+    "value": 5,
+    "unit": "minutes"
+  },
+  "prepushTest": true,
+  "prepushRun": true
+}
