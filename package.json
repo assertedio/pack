@@ -59,6 +59,7 @@
   },
   "scripts": {
     "prepare": "fixpack",
-    "test": "nyc mocha --exit \"tests/**/*.unit.js\""
+    "test": "nyc mocha --exit \"tests/**/*.unit.js\"",
+    "postpublish": "git push"
   }
 }
