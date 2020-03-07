@@ -6,18 +6,21 @@ const readJson = BB.promisify(require('read-package-json'))
 
 const pack = require('./lib/pack');
 
-function createPackage(pkgDir) {
+function createPackage(pkgDir, packageCallback) {
   if (!pkgDir) {
     throw new Error('pkgDir must be provided')
+  }
+
+  if (!packageCallback) {
+    throw new Error('packageCallback must be provided')
   }
 
   return readJson(path.join(pkgDir, 'package.json')).then((pkg) => {
     return cacache.tmp.withTmp(pack.tmpDir, {tmpPrefix: 'fromDir'}, (tmpDir) => {
       const target = path.join(tmpDir, 'package.tgz')
       return pack.packDirectory(pkgDir, target, null, true)
-        .tap((c) => { contents = c })
         .then((c) => pack.logContents(c))
-        .then(() => { pkg, target })
+        .then(() => packageCallback({ pkg, target }))
     })
   });
 }
