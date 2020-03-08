@@ -57,6 +57,12 @@
     "docs/**/*.*"
   ],
   "homepage": "https://github.com/assertedio/pack#readme",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged"
+    }
+  },
   "keywords": [
     "asserted",
     "pack",
