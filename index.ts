@@ -5,9 +5,9 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 
-import { logContents, packDirectory } from './lib/pack';
+import { logSummary, packDirectory } from './lib/pack';
 
-export const createPackage = async (pkgDir: string, packageCallback: Function): Promise<void> => {
+const createPackage = async (pkgDir: string, packageCallback: Function): Promise<void> => {
   if (!pkgDir) {
     throw new Error('pkgDir must be provided');
   }
@@ -23,12 +23,13 @@ export const createPackage = async (pkgDir: string, packageCallback: Function): 
 
   return Bluebird.resolve()
     .then(() =>
-      cacache.tmp.withTmp(tmpDir, (dir) => {
+      cacache.tmp.withTmp(tmpDir, async (dir) => {
         const target = path.join(dir, 'package.tgz');
-        return packDirectory(pkgDir, target)
-          .then((c) => logContents(c))
-          .then(() => packageCallback({ target }));
+        const summary = await packDirectory(pkgDir, target);
+        return packageCallback({ target, summary });
       })
     )
     .finally(() => fs.remove(tmpDir));
 };
+
+export { logSummary, createPackage };

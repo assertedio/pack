@@ -6,7 +6,7 @@ import log from 'npmlog';
 import ssri from 'ssri';
 import tar from 'tar';
 
-export const getContents = async (target: string) => {
+export const getSummary = async (target: string) => {
   const bundledWanted = new Set<string>([]);
   const files = [] as { path: string; size: number; mode: string }[];
   const bundled = new Set();
@@ -74,10 +74,10 @@ export const packDirectory = async (dir: string, target: string) => {
     files.map((f) => `./${f}`)
   );
 
-  return getContents(target);
+  return getSummary(target);
 };
 
-export const logContents = (tarball): void => {
+export const logSummary = (tarball): void => {
   log.notice('=== Tarball Contents ===');
   if (tarball.files.length > 0) {
     log.notice(

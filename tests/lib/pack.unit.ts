@@ -4,7 +4,9 @@ import pathLib from 'path';
 import { Readable } from 'stream';
 import tar from 'tar';
 
-import { createPackage } from '../..';
+// NOTE: This is necessary or the import will pull in the dist version
+// eslint-disable-next-line unicorn/import-index
+import { createPackage } from '../../index';
 import { packDirectory } from '../../lib/pack';
 
 const OUTPUT_PATH = pathLib.join(__dirname, '../output');
@@ -59,6 +61,10 @@ describe('pack unit tests', () => {
     const stream = new Readable();
     stream.push(packageString, 'base64');
     stream.push(null);
-    await stream.pipe(tar.x({ C: OUTPUT_PATH }));
+    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+
+    const files = await fs.readdir(pathLib.join(OUTPUT_PATH, 'package'));
+
+    expect(files).to.eql(['index.js', 'package.json']);
   });
 });
