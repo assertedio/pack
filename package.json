@@ -7,27 +7,54 @@
     "url": "https://github.com/assertedio/pack/issues"
   },
   "dependencies": {
-    "bluebird": "^3.5.5",
+    "bluebird": "^3.7.2",
     "byte-size": "^5.0.1",
     "cacache": "^12.0.3",
     "columnify": "~1.5.4",
-    "graceful-fs": "^4.2.3",
-    "move-concurrently": "^1.0.1",
+    "fs-extra": "^8.1.0",
     "npm-packlist": "^1.4.8",
     "npmlog": "^4.1.2",
-    "read-package-json": "^2.1.1",
     "ssri": "^6.0.1",
-    "tar": "^4.4.13"
+    "tar": "^6.0.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@ehacke/commitlint-config": "^1.0.2",
+    "@ehacke/eslint-config": "^1.0.0",
+    "@ehacke/prettier-config": "^1.0.1",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/bluebird": "^3.5.30",
+    "@types/fs-extra": "^8.1.0",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.0",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
     "chai": "^4.2.0",
-    "fs-extra": "^8.1.0",
+    "commitizen": "^4.0.3",
+    "commitlint": "^8.3.5",
+    "cz-conventional-changelog": "^3.1.0",
+    "eslint": "^6.8.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-simple-import-sort": "^5.0.0",
+    "fixpack": "^3.0.5",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.1",
     "mocha": "^7.1.0",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.0",
+    "prettier": "^1.18.2",
+    "prettier-eslint-cli": "^5.0.0",
+    "ts-node": "^8.6.2",
+    "ts-sinon": "^1.0.24",
+    "tsconfig-paths": "^3.9.0",
+    "typedoc": "^0.16.11",
+    "typedoc-plugin-markdown": "^2.2.16",
+    "typescript": "^3.8.3",
+    "typings": "^2.1.1"
   },
   "files": [
-    "lib/**/*.js",
-    "index.js"
+    "dist/**/*.{js,ts,tsbuildinfo}",
+    "docs/**/*.*"
   ],
   "homepage": "https://github.com/assertedio/pack#readme",
   "keywords": [
@@ -37,14 +64,24 @@
     "tar"
   ],
   "license": "MIT",
-  "main": "index.js",
+  "lint-staged": {
+    "package.json": [
+      "fixpack"
+    ],
+    "**/*.js, **/*.ts": [
+      "prettier-eslint --write",
+      "eslint --fix"
+    ]
+  },
+  "main": "dist/index.js",
   "nyc": {
     "all": true,
     "extension": [
-      ".js"
+      ".ts"
     ],
     "include": [
-      "lib/**/*.js"
+      "lib/**/*.ts",
+      "index.ts"
     ],
     "exclude": [
       "src/scratch.*"
@@ -62,8 +99,21 @@
     "url": "git+https://github.com/assertedio/pack.git"
   },
   "scripts": {
+    "beta": "npm version prerelease && npm publish",
+    "build": "rm -rf ./dist && tsc -p tsconfig.build.json",
+    "commit": "git-cz",
+    "docs": "typedoc --plugin typedoc-plugin-markdown --readme none --exclude \"tests/**/*.+(unit|it).+(ts|js)\"",
+    "integration": "nyc mocha --recursive -r source-map-support/register -r ts-node/register -r tsconfig-paths/register --use_strict --exit \"tests/**/*.it.+(ts|js)\"",
+    "lint": "fixpack && prettier-eslint --write && eslint --fix \"**/*.{js,ts}\"",
+    "major": "npm version major && npm publish",
+    "minor": "npm version minor && npm publish",
+    "patch": "npm version patch && npm publish",
     "postpublish": "git push",
     "prepare": "fixpack",
-    "test": "nyc mocha --exit \"tests/**/*.unit.js\""
-  }
+    "prepublishOnly": "npm run build",
+    "preversion": "npm run lint && npm run test",
+    "test": "nyc mocha --recursive -r source-map-support/register -r ts-node/register -r tsconfig-paths/register --use_strict --exit \"tests/**/*.+(unit|it).+(ts|js)\"",
+    "unit": "nyc mocha --recursive -r source-map-support/register -r ts-node/register -r tsconfig-paths/register --use_strict --exit \"tests/**/*.unit.+(ts|js)\""
+  },
+  "types": "dist/index.d.ts"
 }
