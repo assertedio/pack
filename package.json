@@ -74,7 +74,7 @@
     "package.json": [
       "fixpack"
     ],
-    "**/*.js, **/*.ts": [
+    "*.{js,ts}": [
       "prettier-eslint --write",
       "eslint --fix"
     ]
