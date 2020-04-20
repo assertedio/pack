@@ -8,13 +8,13 @@
   },
   "dependencies": {
     "bluebird": "^3.7.2",
-    "byte-size": "^5.0.1",
-    "cacache": "^12.0.3",
+    "byte-size": "^6.2.0",
+    "cacache": "^15.0.0",
     "columnify": "~1.5.4",
-    "fs-extra": "^8.1.0",
-    "npm-packlist": "^1.4.8",
+    "fs-extra": "^9.0.0",
+    "npm-packlist": "^2.1.1",
     "npmlog": "^4.1.2",
-    "ssri": "^6.0.1",
+    "ssri": "^8.0.0",
     "tar": "^6.0.1"
   },
   "devDependencies": {
@@ -42,15 +42,12 @@
     "lint-staged": "^10.0.1",
     "mocha": "^7.1.0",
     "nyc": "^15.0.0",
-    "prettier": "^1.18.2",
+    "prettier": "^2.0.4",
     "prettier-eslint-cli": "^5.0.0",
     "ts-node": "^8.6.2",
-    "ts-sinon": "^1.0.24",
-    "tsconfig-paths": "^3.9.0",
-    "typedoc": "^0.16.11",
+    "typedoc": "^0.17.4",
     "typedoc-plugin-markdown": "^2.2.16",
-    "typescript": "^3.8.3",
-    "typings": "^2.1.1"
+    "typescript": "^3.8.3"
   },
   "files": [
     "dist/**/*.{js,ts,tsbuildinfo}",
