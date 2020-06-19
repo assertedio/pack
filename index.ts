@@ -7,7 +7,7 @@ import path from 'path';
 
 import { logSummary, packDirectory } from './lib/pack';
 
-const createPackage = async (pkgDir: string, packageCallback: Function): Promise<void> => {
+const createPackage = async (pkgDir: string, packageCallback: (result: { target: string; summary: Record<string, any> }) => void): Promise<void> => {
   if (!pkgDir) {
     throw new Error('pkgDir must be provided');
   }
