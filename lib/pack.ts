@@ -103,8 +103,6 @@ export const logSummary = (tarball): void => {
     '',
     columnify(
       [
-        { name: 'name:', value: tarball.name },
-        { name: 'version:', value: tarball.version },
         tarball.filename && { name: 'filename:', value: tarball.filename },
         { name: 'package size:', value: byteSize(tarball.size) },
         { name: 'unpacked size:', value: byteSize(tarball.unpackedSize) },
