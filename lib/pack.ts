@@ -87,7 +87,8 @@ export const packDirectory = async (dir: string, target: string): Promise<PackSu
 };
 
 export const logSummary = (summary: PackSummaryInterface): void => {
-  log.notice('=== Tarball Contents ===');
+  log.notice('');
+  log.notice('=== Routine Package Contents ===');
   if (summary.files.length > 0) {
     log.notice(
       '',
@@ -107,7 +108,7 @@ export const logSummary = (summary: PackSummaryInterface): void => {
     log.notice('=== Bundled Dependencies ===');
     summary.bundled.forEach((name) => log.notice('', name));
   }
-  log.notice('=== Tarball Details ===');
+  log.notice('=== Routine Package Details ===');
   log.notice(
     '',
     columnify(
