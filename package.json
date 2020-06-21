@@ -9,7 +9,6 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "byte-size": "^7.0.0",
-    "cacache": "^15.0.4",
     "columnify": "~1.5.4",
     "fs-extra": "^9.0.1",
     "npm-packlist": "^2.1.2",

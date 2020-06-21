@@ -6,10 +6,20 @@ import log from 'npmlog';
 import ssri from 'ssri';
 import tar from 'tar';
 
-export const getSummary = async (target: string) => {
+export interface PackSummaryInterface {
+  size: number;
+  unpackedSize: number;
+  shasum: string;
+  integrity: string;
+  files: { path: string; size: number; mode: string }[];
+  entryCount: number;
+  bundled: string[];
+}
+
+export const getSummary = async (target: string): Promise<PackSummaryInterface> => {
   const bundledWanted = new Set<string>([]);
   const files = [] as { path: string; size: number; mode: string }[];
-  const bundled = new Set();
+  const bundled = new Set<string>();
   let totalEntries = 0;
   let totalEntrySize = 0;
 
@@ -52,11 +62,10 @@ export const getSummary = async (target: string) => {
   };
 };
 
-export const packDirectory = async (dir: string, target: string) => {
+export const packDirectory = async (dir: string, target: string): Promise<PackSummaryInterface> => {
   const tarOpt = {
     file: target,
     cwd: dir,
-    prefix: 'package/',
     portable: true,
     // Provide a specific date in the 1980s for the benefit of zip,
     // which is confounded by files dated at the Unix epoch 0.
@@ -77,13 +86,13 @@ export const packDirectory = async (dir: string, target: string) => {
   return getSummary(target);
 };
 
-export const logSummary = (tarball): void => {
+export const logSummary = (summary: PackSummaryInterface): void => {
   log.notice('=== Tarball Contents ===');
-  if (tarball.files.length > 0) {
+  if (summary.files.length > 0) {
     log.notice(
       '',
       columnify(
-        tarball.files.map((f) => {
+        summary.files.map((f) => {
           const bytes = byteSize(f.size);
           return { path: f.path, size: `${bytes.value}${bytes.unit}` };
         }),
@@ -94,28 +103,27 @@ export const logSummary = (tarball): void => {
       )
     );
   }
-  if (tarball.bundled.length > 0) {
+  if (summary.bundled.length > 0) {
     log.notice('=== Bundled Dependencies ===');
-    tarball.bundled.forEach((name) => log.notice('', name));
+    summary.bundled.forEach((name) => log.notice('', name));
   }
   log.notice('=== Tarball Details ===');
   log.notice(
     '',
     columnify(
       [
-        tarball.filename && { name: 'filename:', value: tarball.filename },
-        { name: 'package size:', value: byteSize(tarball.size) },
-        { name: 'unpacked size:', value: byteSize(tarball.unpackedSize) },
-        { name: 'shasum:', value: tarball.shasum },
+        { name: 'package size:', value: byteSize(summary.size) },
+        { name: 'unpacked size:', value: byteSize(summary.unpackedSize) },
+        { name: 'shasum:', value: summary.shasum },
         {
           name: 'integrity:',
           // eslint-disable-next-line no-magic-numbers
-          value: `${tarball.integrity.toString().slice(0, 20)}[...]${tarball.integrity.toString().slice(80)}`,
+          value: `${summary.integrity.toString().slice(0, 20)}[...]${summary.integrity.toString().slice(80)}`,
         },
-        tarball.bundled.length && { name: 'bundled deps:', value: tarball.bundled.length },
-        tarball.bundled.length && { name: 'bundled files:', value: tarball.entryCount - tarball.files.length },
-        tarball.bundled.length && { name: 'own files:', value: tarball.files.length },
-        { name: 'total files:', value: tarball.entryCount },
+        summary.bundled.length && { name: 'bundled deps:', value: summary.bundled.length },
+        summary.bundled.length && { name: 'bundled files:', value: summary.entryCount - summary.files.length },
+        summary.bundled.length && { name: 'own files:', value: summary.files.length },
+        { name: 'total files:', value: summary.entryCount },
       ].filter((x) => x),
       {
         include: ['name', 'value'],

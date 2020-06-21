@@ -24,7 +24,13 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'tests/something.astd.js', 'something.js', 'config.json', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql([
+      './index.js',
+      './tests/something.astd.js',
+      './something.js',
+      './config.json',
+      './package.json',
+    ]);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -34,7 +40,7 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'tests/something.astd.js', 'something.js', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql(['./index.js', './tests/something.astd.js', './something.js', './package.json']);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -44,7 +50,7 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql(['./index.js', './package.json']);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -63,7 +69,7 @@ describe('pack unit tests', () => {
     stream.push(null);
     await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
-    const files = await fs.readdir(pathLib.join(OUTPUT_PATH, 'package'));
+    const files = await fs.readdir(OUTPUT_PATH);
 
     expect(files).to.eql(['index.js', 'package.json']);
   });
