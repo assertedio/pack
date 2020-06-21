@@ -24,7 +24,13 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'tests/something.astd.js', 'something.js', 'config.json', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql([
+      './index.js',
+      './tests/something.astd.js',
+      './something.js',
+      './config.json',
+      './package.json',
+    ]);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -34,7 +40,7 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'tests/something.astd.js', 'something.js', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql(['./index.js', './tests/something.astd.js', './something.js', './package.json']);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -44,7 +50,7 @@ describe('pack unit tests', () => {
 
     const contents = await packDirectory(cwd, target);
 
-    expect(contents.files.map(({ path }) => path)).to.eql(['index.js', 'package.json']);
+    expect(contents.files.map(({ path }) => path)).to.eql(['./index.js', './package.json']);
     expect(await fs.pathExists(target)).to.eql(true);
   });
 
@@ -63,8 +69,29 @@ describe('pack unit tests', () => {
     stream.push(null);
     await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
-    const files = await fs.readdir(pathLib.join(OUTPUT_PATH, 'package'));
+    const files = await fs.readdir(OUTPUT_PATH);
 
     expect(files).to.eql(['index.js', 'package.json']);
+  });
+
+  it('pack and return string with simple real example', async () => {
+    const cwd = pathLib.join(RESOURCES_PATH, 'simple');
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const packageString = await new Promise((resolve) => {
+      let fileString;
+      createPackage(cwd, async ({ target }) => {
+        fileString = await fs.readFile(target, 'base64');
+      }).then(() => resolve(fileString));
+    });
+
+    const stream = new Readable();
+    stream.push(packageString, 'base64');
+    stream.push(null);
+    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+
+    const files = await fs.readdir(OUTPUT_PATH);
+
+    expect(files.sort()).to.eql(['foo.asrtd.js', 'package.json', 'routine.json']);
   });
 });

@@ -1,13 +1,28 @@
 import Bluebird from 'bluebird';
-import cacache from 'cacache';
 import crypto from 'crypto';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 
-import { logSummary, packDirectory } from './lib/pack';
+import { logSummary, packDirectory, PackSummaryInterface } from './lib/pack';
 
-const createPackage = async (pkgDir: string, packageCallback: (result: { target: string; summary: Record<string, any> }) => void): Promise<void> => {
+export { logSummary, PackSummaryInterface };
+
+export interface PackResultInterface {
+  target: string;
+  summary: PackSummaryInterface;
+}
+
+/**
+ * Create package
+ *
+ * NOTE: This has to use a callback so that it can delete the file afterwards
+ *
+ * @param {string} pkgDir
+ * @param {(result: PackResultInterface) => void} packageCallback
+ * @returns {Promise<void}
+ */
+export const createPackage = async (pkgDir: string, packageCallback: (result: PackResultInterface) => void): Promise<void> => {
   if (!pkgDir) {
     throw new Error('pkgDir must be provided');
   }
@@ -21,15 +36,11 @@ const createPackage = async (pkgDir: string, packageCallback: (result: { target:
   const tmpFolder = `pack-${process.pid}-${rand}`;
   const tmpDir = path.resolve(os.tmpdir(), tmpFolder);
 
-  return Bluebird.resolve()
-    .then(() =>
-      cacache.tmp.withTmp(tmpDir, async (dir) => {
-        const target = path.join(dir, 'package.tgz');
-        const summary = await packDirectory(pkgDir, target);
-        return packageCallback({ target, summary });
-      })
-    )
-    .finally(() => fs.remove(tmpDir));
+  return Bluebird.resolve().then(async () => {
+    await fs.ensureDir(tmpDir);
+    const target = path.join(tmpDir, 'package.tgz');
+    const summary = await packDirectory(pkgDir, target);
+    return packageCallback({ target, summary });
+  });
+  // .finally(() => fs.remove(tmpDir));
 };
-
-export { logSummary, createPackage };

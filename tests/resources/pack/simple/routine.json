@@ -1,0 +1,20 @@
+{
+  "id": "rt-GK_ARG",
+  "projectId": "p-1HLbs9Z",
+  "name": "simple",
+  "description": "Simple Tests",
+  "interval": {
+    "unit": "min",
+    "value": 2
+  },
+  "dependencies": "db-1fU1OE",
+  "mocha": {
+    "files": [
+      "**/*.asrtd.js"
+    ],
+    "ignore": [],
+    "bail": false,
+    "ui": "bdd"
+  },
+  "timeoutSec": 15
+}
