@@ -73,4 +73,25 @@ describe('pack unit tests', () => {
 
     expect(files).to.eql(['index.js', 'package.json']);
   });
+
+  it('pack and return string with simple real example', async () => {
+    const cwd = pathLib.join(RESOURCES_PATH, 'simple');
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const packageString = await new Promise((resolve) => {
+      let fileString;
+      createPackage(cwd, async ({ target }) => {
+        fileString = await fs.readFile(target, 'base64');
+      }).then(() => resolve(fileString));
+    });
+
+    const stream = new Readable();
+    stream.push(packageString, 'base64');
+    stream.push(null);
+    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+
+    const files = await fs.readdir(OUTPUT_PATH);
+
+    expect(files.sort()).to.eql(['foo.asrtd.js', 'package.json', 'routine.json']);
+  });
 });

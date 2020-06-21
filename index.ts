@@ -36,12 +36,11 @@ export const createPackage = async (pkgDir: string, packageCallback: (result: Pa
   const tmpFolder = `pack-${process.pid}-${rand}`;
   const tmpDir = path.resolve(os.tmpdir(), tmpFolder);
 
-  return Bluebird.resolve()
-    .then(async () => {
-      await fs.ensureDir(tmpDir);
-      const target = path.join(tmpDir, 'package.tgz');
-      const summary = await packDirectory(pkgDir, target);
-      return packageCallback({ target, summary });
-    })
-    .finally(() => fs.remove(tmpDir));
+  return Bluebird.resolve().then(async () => {
+    await fs.ensureDir(tmpDir);
+    const target = path.join(tmpDir, 'package.tgz');
+    const summary = await packDirectory(pkgDir, target);
+    return packageCallback({ target, summary });
+  });
+  // .finally(() => fs.remove(tmpDir));
 };
