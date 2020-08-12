@@ -101,7 +101,7 @@
     "url": "git+https://github.com/assertedio/pack.git"
   },
   "scripts": {
-    "beta": "npm version prerelease && npm publish",
+    "beta": "npm version prerelease && npm publish --tag beta",
     "build": "rm -rf ./dist && tsc -p tsconfig.build.json",
     "commit": "git-cz",
     "docs": "typedoc --plugin typedoc-plugin-markdown --readme none --exclude \"tests/**/*.+(unit|it).+(ts|js)\"",
