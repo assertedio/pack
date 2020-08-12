@@ -1,7 +1,7 @@
 {
   "name": "@asserted/pack",
   "description": "Pack up directory to send to asserted",
-  "version": "2.2.2",
+  "version": "2.2.3-0",
   "author": "Eric Hacke",
   "bugs": {
     "url": "https://github.com/assertedio/pack/issues"
