@@ -6,7 +6,7 @@ import tar from 'tar';
 
 // NOTE: This is necessary or the import will pull in the dist version
 // eslint-disable-next-line unicorn/import-index
-import { createPackage } from '../../index';
+import { createPackage, extractLocal } from '../../index';
 import { packDirectory } from '../../lib/pack';
 
 const OUTPUT_PATH = pathLib.join(__dirname, '../output');
@@ -67,7 +67,7 @@ describe('pack unit tests', () => {
     const stream = new Readable();
     stream.push(packageString, 'base64');
     stream.push(null);
-    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+    await new Promise<void>((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
     const files = await fs.readdir(OUTPUT_PATH);
 
@@ -88,10 +88,26 @@ describe('pack unit tests', () => {
     const stream = new Readable();
     stream.push(packageString, 'base64');
     stream.push(null);
-    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+    await new Promise<void>((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
     const files = await fs.readdir(OUTPUT_PATH);
 
     expect(files.sort()).to.eql(['foo.asrtd.js', 'package.json', 'routine.json']);
+  });
+
+  it('unpack string into directory', async () => {
+    const cwd = pathLib.join(RESOURCES_PATH, 'files');
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const packageString: string = await new Promise((resolve) => {
+      let fileString;
+      createPackage(cwd, async ({ target }) => {
+        fileString = await fs.readFile(target, 'base64');
+      }).then(() => resolve(fileString));
+    });
+
+    await extractLocal(packageString, OUTPUT_PATH);
+    const files = await fs.readdir(OUTPUT_PATH);
+    expect(files).to.eql(['index.js', 'package.json']);
   });
 });

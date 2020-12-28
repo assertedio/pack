@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import packlist from 'npm-packlist';
 import log from 'npmlog';
 import ssri from 'ssri';
-import tar from 'tar';
+import tar, { FileOptions, ListOptions } from 'tar';
 
 export interface PackSummaryInterface {
   size: number;
@@ -23,27 +23,30 @@ export const getSummary = async (target: string): Promise<PackSummaryInterface> 
   let totalEntries = 0;
   let totalEntrySize = 0;
 
-  await tar.t({
+  const tarOpts: ListOptions & FileOptions = {
     file: target,
     onentry(entry) {
       totalEntries++;
       totalEntrySize += entry.size;
-      const p = entry.path;
+      // This type is wrong
+      const p = (entry.path as any) as string;
       if (p.startsWith('package/node_modules/')) {
-        const name = p.match(/^package\/node_modules\/((?:@[^/]+\/)?[^/]+)/)[1];
-        if (bundledWanted.has(name)) {
+        const name = (p.match(/^package\/node_modules\/((?:@[^/]+\/)?[^/]+)/) || [])[1];
+        if (name && bundledWanted.has(name)) {
           bundled.add(name);
         }
       } else {
         files.push({
-          path: entry.path.replace(/^package\//, ''),
+          path: p.replace(/^package\//, ''),
           size: entry.size,
-          mode: entry.mode,
+          mode: entry.mode as any,
         });
       }
     },
-    strip: 1,
-  });
+  };
+
+  // Again, just a workaround for bad types. Strip is missing for some reason
+  await tar.t({ ...tarOpts, strip: 1 } as any);
 
   const stat = await fs.stat(target);
   const integrity = await ssri.fromStream(fs.createReadStream(target), {
