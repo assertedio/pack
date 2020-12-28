@@ -23,7 +23,7 @@ export interface PackResultInterface {
  * @param {string} pkgDir
  * @param {(result: PackResultInterface) => void} packageCallback
  * @param {boolean} [cleanup=true]
- * @returns {Promise<void}
+ * @returns {Promise<void>}
  */
 export const createPackage = async (pkgDir: string, packageCallback: (result: PackResultInterface) => void, cleanup = true): Promise<void> => {
   if (!pkgDir) {
@@ -62,7 +62,7 @@ export const extractLocal = async (packageString: string, extractDir: string): P
   const stream = new Readable();
   stream.push(packageString, 'base64');
   stream.push(null);
-  await new Promise((resolve) =>
+  await new Promise<void>((resolve) =>
     stream
       .pipe(
         tar.x({
@@ -74,7 +74,7 @@ export const extractLocal = async (packageString: string, extractDir: string): P
           },
         })
       )
-      .on('close', () => resolve())
+      .on('close', (): void => resolve())
   );
 
   return files;

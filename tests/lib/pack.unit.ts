@@ -67,7 +67,7 @@ describe('pack unit tests', () => {
     const stream = new Readable();
     stream.push(packageString, 'base64');
     stream.push(null);
-    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+    await new Promise<void>((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
     const files = await fs.readdir(OUTPUT_PATH);
 
@@ -88,7 +88,7 @@ describe('pack unit tests', () => {
     const stream = new Readable();
     stream.push(packageString, 'base64');
     stream.push(null);
-    await new Promise((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
+    await new Promise<void>((resolve) => stream.pipe(tar.x({ C: OUTPUT_PATH })).on('close', () => resolve()));
 
     const files = await fs.readdir(OUTPUT_PATH);
 
